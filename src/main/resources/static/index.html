@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+	<meta charset="utf-8"/>
+	<title>Demo</title>
+	<meta name="description" content="" />
+	<meta name="viewport" content ="width=device-width"/>
+	<base href="/">
+
+	<!--Added from spring OAuth tutorial website-->
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+	<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+
+	</head>
+	
+	<body>
+		<h1>Home Page</h1>
+		
+		<div id="unauthenticated" style="display:none">
+			<div>
+			Sign in with Github <a href="/oauth2/authorization/github">Log in here</a>
+			</div>
+			<div>
+			Sign in with Google <a href="/oauth2/authorization/google">Log in here</a>
+			</div>
+		</div>
+		
+		<div id="authenticated" style="display: none">
+			Hello <span id="user"></span>
+			<button onclick="logout()" class="btn btn-primary">Log out</button>
+		</div>
+		
+		<div class="container text-danger error">
+			$.get("/error", function(data) {
+   				if (data) {
+        			$(".error").html(data);
+    			} else {
+        			$(".error").html('');
+    			}			
+			});
+		</div>
+	
+	<script>
+		async function checkedLoggedIn() {
+			let response = await fetch('/user');
+			if (response.ok) {
+				let userInfo = await response.json();
+				document.getElementById("user").innerText = userInfo.login;
+				document.getElementById("unauthenticated").style.display = "none";
+				document.getElementById("authenticated").style.display = "block";
+			} else {
+				document.getElementById("unauthenticated").style.display = "block";
+				document.getElementById("authenticated").style.display = "none";
+			}
+		}
+		
+		async function logout() {
+			let response = await fetch("/logout");
+			
+			if (reponse.ok) {
+				document.getElementById("unauthenticated").style.display = "block";
+				document.getElementById("authenticated").style.display = "none";
+			}
+		}
+		
+		checkedLoggedIn();
+		
+	</script>
+	</body>
+
+</html>
